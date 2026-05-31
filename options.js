@@ -26,7 +26,7 @@ async function load() {
   sitesEl.textContent = '';
   const siteRows = Object.entries(pages).sort((a, b) => b[1].count - a[1].count).slice(0, 100);
   if (!siteRows.length) {
-    sitesEl.innerHTML = '<tr><td class="empty" colspan="2">No data yet — browse a bit and come back.</td></tr>';
+    sitesEl.innerHTML = '<tr><td class="empty" colspan="2">No data yet. Browse a bit and come back.</td></tr>';
   } else {
     for (const [hostName, info] of siteRows) {
       const tr = document.createElement('tr');

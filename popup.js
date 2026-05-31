@@ -95,7 +95,7 @@ async function updateSitebar(data) {
   } else if (on) {
     sub.textContent = 'blocking all pop-ups on ' + h;
   } else if (count >= NUDGE_THRESHOLD) {
-    sub.textContent = '⚠ ' + count + ' blocked here — turn on to block all pop-ups';
+    sub.textContent = '⚠ ' + count + ' blocked here. Turn on to block all pop-ups.';
     sub.classList.add('nudge');
   } else {
     sub.textContent = 'smart mode on ' + h;
