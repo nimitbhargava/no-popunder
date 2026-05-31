@@ -195,16 +195,9 @@ what to put in a report.
 
 ## Support
 
-No Popunder is free and open source, and it stays that way. If it spared you a
-few hundred junk tabs and you want to support the work, see
-[`.github/FUNDING.yml`](.github/FUNDING.yml) for sponsor links. Starring the repo
-helps too.
+Questions, bug reports, or a site that still leaks popunders: open an issue at
+[github.com/nimitbhargava/no-popunder/issues](https://github.com/nimitbhargava/no-popunder/issues).
 
 ## License
 
 [GPL-3.0](LICENSE) © No Popunder contributors.
-
-Copyleft on purpose. A pop-up or ad blocker only earns trust if anyone can read
-every line it runs and any fork stays just as open. GPLv3 guarantees that, and it
-keeps the project compatible with community blocklists like EasyList and uBlock's
-uAssets if they are ever incorporated.
