@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    /* hidden must always win, even over our display:flex rows */
+    [hidden] { display: none !important; }
+    body {
+      width: 320px;
+      margin: 0;
+      font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #1b1d22;
+      color: #e8eaed;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px 10px;
+      border-bottom: 1px solid #2c2f36;
+    }
+    header .dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #e53935; flex: 0 0 auto;
+    }
+    header h1 { font-size: 13px; font-weight: 600; margin: 0; }
+    .count {
+      padding: 16px 14px 8px;
+      text-align: center;
+    }
+    .count .n {
+      font-size: 40px; font-weight: 700; line-height: 1;
+      color: #ff6b6b;
+    }
+    .count .label { font-size: 12px; color: #9aa0a6; margin-top: 4px; }
+    .count .alltime { font-size: 11px; color: #6b7077; margin-top: 6px; }
+    .count .alltime b { color: #9aa0a6; font-weight: 600; }
+    .list {
+      max-height: 260px; overflow-y: auto;
+      border-top: 1px solid #2c2f36;
+    }
+    .row {
+      padding: 9px 14px;
+      border-bottom: 1px solid #23262c;
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .row .kind {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    .row .kindleft {
+      font-size: 10px; text-transform: uppercase; letter-spacing: .04em;
+      color: #ffab91;
+    }
+    .row .kindleft .time { color: #80868b; }
+    .row .hostline {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    }
+    .row .host {
+      font-size: 14px; font-weight: 600; color: #f1f3f4;
+      word-break: break-all;
+    }
+    .row .times {
+      flex: 0 0 auto; font-size: 11px; font-weight: 700; color: #ff8a65;
+      background: #3a2723; border-radius: 10px; padding: 1px 8px;
+    }
+    .row .url {
+      font-size: 11px; color: #80868b;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .act {
+      flex: 0 0 auto;
+      font-size: 11px; padding: 2px 9px; border-radius: 6px;
+      border: 1px solid #2c4a66; background: #1e2a35; color: #8ec3ff; cursor: pointer;
+    }
+    .act:hover { background: #243442; }
+    .empty { padding: 18px 14px; text-align: center; color: #9aa0a6; }
+
+    .allowed {
+      padding: 9px 14px; border-top: 1px solid #2c2f36;
+      display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    }
+    .allowed .lbl { font-size: 11px; color: #80868b; margin-right: 2px; }
+    .chip {
+      font-size: 11px; background: #23262c; border: 1px solid #3a3d44;
+      border-radius: 11px; padding: 2px 4px 2px 9px; color: #cfd3d8;
+      display: inline-flex; align-items: center; gap: 3px;
+    }
+    .chip button {
+      background: none; border: none; color: #9aa0a6; cursor: pointer;
+      font-size: 13px; line-height: 1; padding: 0 4px;
+    }
+    .chip button:hover { color: #ff6b6b; }
+
+    .sitebar {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+      padding: 10px 14px; border-top: 1px solid #2c2f36;
+    }
+    .sitebar .txt { font-size: 12px; color: #e8eaed; }
+    .sitebar .txt .sub {
+      display: block; font-size: 10px; color: #80868b; margin-top: 1px;
+      max-width: 230px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .sitebar .txt .sub.nudge { color: #ff8a65; }
+    .switch { position: relative; display: inline-block; width: 38px; height: 20px; flex: 0 0 auto; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; background: #3a3d44; border-radius: 20px;
+      transition: .15s; cursor: pointer;
+    }
+    .slider:before {
+      content: ""; position: absolute; height: 14px; width: 14px; left: 3px; top: 3px;
+      background: #cfd3d8; border-radius: 50%; transition: .15s;
+    }
+    .switch input:checked + .slider { background: #e5533a; }
+    .switch input:checked + .slider:before { transform: translateX(18px); background: #fff; }
+    .switch input:disabled + .slider { opacity: .55; cursor: default; }
+
+    footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 14px; border-top: 1px solid #2c2f36;
+    }
+    footer .site { font-size: 11px; color: #80868b; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px; }
+    footer .actions { display: flex; align-items: center; gap: 6px; }
+    button.bar {
+      background: #2c2f36; color: #e8eaed; border: 1px solid #3a3d44;
+      border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer;
+    }
+    button.bar:hover { background: #353941; }
+    button.link {
+      background: none; border: none; color: #8ec3ff; font-size: 12px;
+      cursor: pointer; padding: 5px 4px;
+    }
+    button.link:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="dot"></span>
+    <h1>No-Popunder</h1>
+  </header>
+
+  <div class="count">
+    <div class="n" id="count">0</div>
+    <div class="label" id="label">popups blocked on this page</div>
+    <div class="alltime" id="alltime"></div>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="allowed" id="allowed" hidden></div>
+
+  <div class="sitebar" id="sitebar" hidden>
+    <span class="txt">
+      Strict on this site
+      <span class="sub" id="strictSub"></span>
+    </span>
+    <label class="switch">
+      <input type="checkbox" id="strictToggle" />
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <footer>
+    <span class="site" id="site"></span>
+    <span class="actions">
+      <button class="link" id="stats">Stats</button>
+      <button class="bar" id="clear">Clear</button>
+    </span>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
