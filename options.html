@@ -72,6 +72,7 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px;
       background: rgba(255,255,255,.08); padding: 1px 5px; border-radius: 5px;
     }
+    .hint { font-size: 12.5px; color: #969ca6; margin: 16px 0 0; }
 
     /* ---- action buttons -------------------------------------------------- */
     .bar { display: flex; gap: 10px; margin: 18px 0 6px; }
@@ -93,17 +94,38 @@
     h2 { font-size: 13px; font-weight: 650; margin: 30px 0 11px; color: #c6cbd3; letter-spacing: .2px; }
     .card { padding: 4px 4px; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 11px 14px; vertical-align: top; }
+    th, td { text-align: left; padding: 11px 14px; vertical-align: middle; }
     tbody tr + tr td { border-top: 1px solid rgba(255,255,255,.07); }
     th {
       font-size: 11px; text-transform: uppercase; letter-spacing: .05em;
       color: #969ca6; font-weight: 600;
       border-bottom: 1px solid rgba(255,255,255,.10);
     }
-    td.num { text-align: right; font-variant-numeric: tabular-nums; color: #ffb59e; width: 90px; font-weight: 600; }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; color: #ffb59e; width: 72px; font-weight: 600; }
     td .ads { font-size: 11px; color: #969ca6; margin-top: 3px; }
     .host { font-weight: 600; color: #f3f4f6; word-break: break-all; }
     .empty { color: #aeb4bd; padding: 26px 14px; text-align: center; }
+
+    /* row-level Allow / Strict toggles */
+    th.action, td.action { text-align: right; width: 150px; white-space: nowrap; }
+    .tgl {
+      font-size: 12px; padding: 5px 12px; border-radius: 9px; cursor: pointer;
+      border: 1px solid rgba(140,195,255,.32); background: rgba(120,170,255,.16); color: #c2dcff;
+      -webkit-backdrop-filter: none; backdrop-filter: none;
+      transition: background .15s, transform .05s;
+    }
+    .tgl:hover { background: rgba(120,170,255,.26); }
+    .tgl:active { transform: scale(.97); }
+    .tgl.allowed {
+      border-color: rgba(120,210,150,.42); background: rgba(70,190,120,.18); color: #b6f0c8;
+    }
+    .tgl.allowed:hover { background: rgba(70,190,120,.28); }
+    .tgl.strict {
+      border-color: rgba(255,138,101,.42); background: rgba(229,57,53,.20); color: #ffb59e;
+    }
+    .tgl.strict:hover { background: rgba(229,57,53,.30); }
+    .tgl[disabled] { opacity: .55; cursor: default; }
+    .tgl[disabled]:hover { background: rgba(229,57,53,.20); transform: none; }
   </style>
 </head>
 <body>
@@ -134,10 +156,15 @@
       <button id="reset" class="danger">Reset stats</button>
     </div>
 
+    <p class="hint">
+      Allow an ad domain to stop blocking it everywhere, or make a site strict to
+      block every cross-site pop-up there. Changes apply immediately, no reload.
+    </p>
+
     <h2>Sites with the most pop-ups</h2>
     <div class="card glass">
       <table>
-        <thead><tr><th>Site (page host)</th><th class="num">Blocked</th></tr></thead>
+        <thead><tr><th>Site (page host)</th><th class="num">Blocked</th><th class="action"></th></tr></thead>
         <tbody id="sites"></tbody>
       </table>
     </div>
@@ -145,7 +172,7 @@
     <h2>Most-seen ad domains</h2>
     <div class="card glass">
       <table>
-        <thead><tr><th>Ad domain</th><th class="num">Blocked</th></tr></thead>
+        <thead><tr><th>Ad domain</th><th class="num">Blocked</th><th class="action"></th></tr></thead>
         <tbody id="ads"></tbody>
       </table>
     </div>
