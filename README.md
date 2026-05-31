@@ -11,6 +11,11 @@ open behind the page when you click. They are worst on free streaming sites. It
 works on any site and tries hard not to break legit pop-ups like logins, payment
 windows, and "open in new tab".
 
+<p align="center">
+  <img src="assets/popup.png" width="340"
+       alt="No Popunder popup: 7 pop-ups blocked on this page, the blocked ad domains each with a one-click Allow, an Allowed chip, and the per-site Smart/Strict toggle">
+</p>
+
 ## Why popunders get past Chrome
 
 Chrome's built-in pop-up blocker only stops pop-ups that open *without* a user
