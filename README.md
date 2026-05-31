@@ -11,11 +11,6 @@ open behind the page when you click. They are worst on free streaming sites. It
 works on any site and tries hard not to break legit pop-ups like logins, payment
 windows, and "open in new tab".
 
-<p align="center">
-  <img src="assets/popup.png" width="340"
-       alt="No Popunder popup: 7 pop-ups blocked on this page, the blocked ad domains each with a one-click Allow, an Allowed chip, and the per-site Smart/Strict toggle">
-</p>
-
 ## Why popunders get past Chrome
 
 Chrome's built-in pop-up blocker only stops pop-ups that open *without* a user
@@ -90,28 +85,10 @@ current page, which resets on navigation. Click the icon for the per-page count,
 a lifetime total, and the blocked domains grouped so repeat offenders collapse
 into one row (`host ×N`):
 
-```
-┌────────────────────────────────┐
-│ ● No Popunder                  │
-│               6                │
-│   popups blocked on this page  │
-│    1,284 blocked all-time      │
-│ ────────────────────────────── │
-│  WINDOW.OPEN · 2:37:06 [ Allow]│
-│  qg.arylblurry.shop        ×3  │
-│  https://qg.arylblurry.shop…   │
-│  WINDOW.OPEN · 2:37:09 [ Allow]│
-│  ua.shikosharply.shop      ×2  │
-│  https://ua.shikosharply.sh…   │
-│ ────────────────────────────── │
-│  Allowed: ( vidvault.ru × )    │
-│ ────────────────────────────── │
-│  Strict on this site      (●─) │
-│  blocking all pop-ups on …     │
-│ ────────────────────────────── │
-│  example.com          [ Clear ]│
-└────────────────────────────────┘
-```
+<p align="center">
+  <img src="assets/popup.png" width="340"
+       alt="No Popunder popup: pop-ups blocked on this page and a lifetime total, the blocked ad domains grouped (host ×N) each with a one-click Allow, an Allowed chip, and the per-site Strict toggle">
+</p>
 
 The per-page count and its list reset on navigation. The lifetime total persists
 across restarts, and Clear resets only the current page.
