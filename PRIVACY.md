@@ -48,6 +48,14 @@ any time with Reset stats or Clear. Removing the extension deletes all of it.
 None. No Popunder shares data with no third party, because it collects no data to
 share.
 
+## Limited Use
+
+Our use of any data received through this extension complies with the Chrome Web
+Store User Data Policy, including its Limited Use requirements. That bar is easy
+to meet here, because the extension transmits no data at all. Everything it
+stores stays on your device, and nothing is ever sold, transferred, or used for
+any purpose beyond the single function of blocking popunder pop-ups.
+
 ## Changes to this policy
 
 If a future version adds any feature that sends data off-device, such as an

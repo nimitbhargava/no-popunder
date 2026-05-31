@@ -2,9 +2,10 @@
   "manifest_version": 3,
   "name": "No Popunder",
   "version": "2.3.0",
-  "description": "Blocks popunder ad tabs on any site, especially streaming sites, without breaking logins or video playback. Shows what it blocked and lets you allow domains per site.",
+  "description": "Blocks popunder ad tabs on any site without breaking logins or video. No servers, no tracking, nothing leaves your device.",
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
@@ -14,6 +15,7 @@
     "default_title": "No Popunder: blocked popups",
     "default_icon": {
       "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     }
