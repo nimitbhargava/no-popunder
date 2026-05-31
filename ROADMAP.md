@@ -10,22 +10,22 @@
 
 ---
 
-## Phase 2 — opt-in crowd-sourced domain intelligence (next)
+## Phase 2: opt-in crowd-sourced domain intelligence (next)
 
 **Goal.** Aggregate `{adHost, pageHost}` across many users to (a) ship better
-`strictHosts` defaults and (b) a shared ad-domain blocklist — so new users are
+`strictHosts` defaults and (b) a shared ad-domain blocklist, so new users are
 protected on day one without anyone toggling anything.
 
 **Rule.** Build it strictly opt-in. An ad blocker that quietly phones home with
 browsing data is the fastest path to losing trust and getting delisted. Default
 OFF. Host-only. No full URLs, ever.
 
-### Must-haves (privacy/legal — do these or don't ship)
+### Must-haves (privacy/legal: do these or don't ship)
 
 - [ ] Opt-in toggle in `options.html`, **default OFF** (`share` flag in
       `storage.local`).
 - [ ] Plain-language disclosure of exactly what's sent: page **host** +
-      ad-domain **host** only — no path, no query, no page content, no IDs.
+      ad-domain **host** only, with no path, no query, no page content, no IDs.
 - [ ] A hosted **privacy policy** page (the `chrome-extension-submission` skill
       can generate + host one).
 - [ ] Chrome Web Store **data-use disclosure** form filled; mark Limited Use;
@@ -41,7 +41,7 @@ OFF. Host-only. No full URLs, ever.
 - [ ] `fetch` POST to the endpoint. Add `host_permissions` for the endpoint and
       the `alarms` permission to the manifest.
 - [ ] Strip everything but hosts. No stable user ID (anonymous), or a rotating
-      one — decide below and document it.
+      one. Decide below and document it.
 
 ### Backend (minimal)
 
@@ -76,16 +76,16 @@ OFF. Host-only. No full URLs, ever.
 - Privacy policy + store disclosure: ~2 hours.
 
 > Hook point in code: see the `TODO(phase-2)` marker in `background.js`, next to
-> the local `stats` aggregation — that's where the upload batch is sourced.
+> the local `stats` aggregation. That's where the upload batch is sourced.
 
 ---
 
-## Phase 3 — community lists (EasyList / uBlock)
+## Phase 3: community lists (EasyList / uBlock)
 
 **Goal.** Complement the behavioral blocker with curated ad-domain blocking, the
 way uBlock Origin Lite (uBOL) does.
 
-**Mechanism.** MV3 doesn't run Adblock-syntax lists in JS — you compile them to
+**Mechanism.** MV3 doesn't run Adblock-syntax lists in JS. You compile them to
 `declarativeNetRequest` (DNR) static rulesets. Two integration options:
 
 - [ ] **DNR ad-request blocking:** convert an ad-domain list to DNR `block`
@@ -96,7 +96,7 @@ way uBlock Origin Lite (uBOL) does.
       current architecture. Good home for the Phase 2 crowd-sourced domains too.
 
 **Licensing (decide before shipping):**
-- EasyList: **GPLv3 + CC BY-SA 3.0** — attribution + share-alike.
+- EasyList: **GPLv3 + CC BY-SA 3.0** (attribution + share-alike).
 - uBlock `uAssets`: **GPLv3**.
 - Peter Lowe's list: **non-commercial only**.
 - → Pick a list whose license fits how you distribute (commercial vs not), add
@@ -104,7 +104,7 @@ way uBlock Origin Lite (uBOL) does.
 
 **Note.** The behavioral blocker already handles the *rotating* popunder domains
 on streaming sites (they change faster than lists update). Lists mainly add broad
-ad-request blocking — nice-to-have, not the core. Consider seeding the blocklist
+ad-request blocking, which is nice to have but not the core. Consider seeding the blocklist
 from our own Phase 2 data instead, which sidesteps the licensing question.
 
 ### Permissions this adds

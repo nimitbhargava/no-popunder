@@ -44,7 +44,7 @@ async function recordBlock(tabId, entry) {
 
 // ---- local aggregate stats (never leaves this device) -------------------
 // We record only domains: the ad host that was blocked, and the HOST of the
-// page it fired on (e.g. "7reels.cc") — never the full URL/path/query. This is
+// page it fired on (e.g. "7reels.cc"), never the full URL/path/query. This is
 // the dataset for deciding shipped strict defaults, and it powers the local
 // "suggest Strict" nudge. Writes are serialized to avoid lost increments when
 // a page fires many popunders at once.

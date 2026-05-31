@@ -1,12 +1,12 @@
-// No-Popunder — a site-agnostic popunder blocker.
+// No Popunder: a site-agnostic popunder blocker.
 // Runs in every frame's MAIN world at document_start and stops the
 // "click the video, a junk tab opens behind it" behavior, on any site.
 //
 // Two layers:
 //   • Smart (everywhere, default): a cross-origin pop-up is blocked UNLESS it
 //     directly followed you clicking a real link or button. So pop-ups that fire
-//     from clicks on the video / page / invisible overlay — the popunder
-//     signature — are blocked, while logins, payments and intentional
+//     from clicks on the video, page, or invisible overlay (the popunder
+//     signature) are blocked, while logins, payments and intentional
 //     "open in new tab" keep working.
 //   • Strict (on `strictHosts`): block ALL cross-origin pop-ups, because those
 //     sites have no legit pop-ups. Covers the page and its player iframes.
@@ -122,7 +122,7 @@
 
     const blockedOpen = function open(url, target) {
       // Same-tab navigations via window.open(url, '_self'|'_top'|'_parent') are
-      // not pop-ups — never block those.
+      // not pop-ups, so never block those.
       const t = target ? String(target).toLowerCase() : '';
       if (t === '_self' || t === '_top' || t === '_parent') {
         return realOpen.apply(window, arguments);
