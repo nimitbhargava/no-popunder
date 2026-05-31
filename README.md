@@ -43,6 +43,16 @@ gets auto-clicked. It then decides each pop-up using two layers.
 Three things are always allowed in both layers: same-origin pop-ups, same-tab
 navigations (`window.open(url, "_self")`), and any domain on your Allow list.
 
+## Screenshots
+
+![The popup blocking pop-ups: a count of pop-ups blocked on the page, every blocked ad domain with a one-click Allow, an Allowed chip, and a nudge to turn on Strict](assets/screenshot-1-hero.png)
+
+![Make any site Strict in one click: the per-site Smart/Strict toggle in the popup](assets/screenshot-2-strict.png)
+
+![The local Stats page listing the sites with the most pop-ups and the most-seen ad domains, host names only, with per-row Allow and Make-strict controls](assets/screenshot-3-stats.png)
+
+![Private by design: a summary that all data is stored locally on the device, with no servers, no tracking, no accounts, and no network requests](assets/screenshot-4-privacy.png)
+
 ## Install (load unpacked)
 
 1. Open `chrome://extensions` in Chrome.
