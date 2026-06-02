@@ -8,6 +8,9 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- Published to the [Chrome Web Store](https://chromewebstore.google.com/detail/no-popunder/egnfpcniepjchocifgegplahbgmnhojn).
+  This 2.3.0 build is the first release available there; before this the only way
+  to run it was loading it unpacked.
 - Per-row controls on the Stats page. You can now Allow or re-block an ad domain,
   and switch a site between Smart and Strict, straight from the tables. The
   toggles write the same Allow and Strict lists the popup uses, so they apply to

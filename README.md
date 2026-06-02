@@ -1,6 +1,7 @@
 # No Popunder
 
-[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Add%20to%20Chrome-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/no-popunder/egnfpcniepjchocifgegplahbgmnhojn)
+&nbsp;[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
 &nbsp;![Manifest V3](https://img.shields.io/badge/Manifest-V3-success)
 &nbsp;![No servers](https://img.shields.io/badge/servers-none-brightgreen)
 &nbsp;![No tracking](https://img.shields.io/badge/tracking-none-brightgreen)
@@ -48,20 +49,41 @@ navigations (`window.open(url, "_self")`), and any domain on your Allow list.
 
 ![Private by design: a summary that all data is stored locally on the device, with no servers, no tracking, no accounts, and no network requests](assets/screenshot-4-privacy.png)
 
-## Install (load unpacked)
+## Install
 
-1. Open `chrome://extensions` in Chrome.
-2. Turn on Developer mode (top-right toggle).
-3. Click Load unpacked and select this folder.
+### From the Chrome Web Store
+
+[**Add to Chrome →**](https://chromewebstore.google.com/detail/no-popunder/egnfpcniepjchocifgegplahbgmnhojn)
+
+Click Add to Chrome and browse normally. Popunders are gone and logins still
+work. Chrome keeps it updated automatically. Remove it any time from
+`chrome://extensions`, or by right-clicking the toolbar icon.
+
+> **Seeing a "not trusted by Enhanced Safe Browsing" notice while installing?**
+> That is normal for a newly published extension, and it only shows if you have
+> Enhanced Safe Browsing turned on. It is a reputation signal based on how new the
+> extension and its developer are on the store, not a finding about the code, and
+> it clears on its own over the first few months. Click Continue to install in the
+> meantime. Everything here is open source, about 50 KB of vanilla JS with no
+> servers and no network calls, so you can read every line before you trust it.
+
+> Works the same in any Chromium browser: Brave, Edge, Arc, Opera, Vivaldi. Open
+> the link above in any of them and install.
+
+### From source (load unpacked)
+
+To run the latest unreleased code or hack on it:
+
+1. Clone or download this repo.
+2. Open `chrome://extensions` and turn on Developer mode (top-right toggle).
+3. Click Load unpacked and select the folder.
 4. Browse normally. Popunders are gone and logins still work.
 
-It talks to no servers. To remove it, click Remove on the extensions page.
+It talks to no servers either way.
 
-> Works the same in any Chromium browser: Brave, Edge, Arc, Opera, Vivaldi.
-
-> **Updating from an older version?** After you reload it on the extensions page,
-> also refresh any open tabs. Chrome does not update content scripts in tabs that
-> are already open.
+> **Just updated?** Whether Chrome auto-updates the store version or you reload an
+> unpacked build, refresh any tabs you already had open. Chrome does not swap the
+> content script in tabs that were already loaded.
 
 ## Privacy
 
