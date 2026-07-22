@@ -82,29 +82,53 @@
   // Lets Smart mode tell "you clicked a real link/button" (likely a legit
   // pop-up) from "a pop-up fired off a click on the video/page" (popunder).
   let lastGesture = { ts: 0, interactive: false };
-  const INTERACTIVE = 'a[href], button, [role="button"], input, select, summary, label';
+  // Beyond semantic elements we accept explicit intent markers (onclick,
+  // focusable tabindex, common ARIA roles): plenty of real "Pay" / "Share" /
+  // "Sign in" buttons are custom <div>/<span> components, not <button>s, and
+  // blocking their pop-up breaks the site for the user.
+  const INTERACTIVE =
+    'a[href], button, input, select, textarea, summary, label, ' +
+    '[role="button"], [role="link"], [role="menuitem"], [role="tab"], [role="option"], ' +
+    '[onclick], [tabindex]:not([tabindex="-1"])';
+  // What keeps the broader selector from re-opening the popunder hole: a
+  // popunder's click trap is a full-viewport overlay (often with its own
+  // onclick), while a genuine control is small. A match that blankets the
+  // screen is a trap, not intent.
+  function blanketsViewport(el) {
+    try {
+      const r = el.getBoundingClientRect();
+      const vw = window.innerWidth || document.documentElement.clientWidth || 0;
+      const vh = window.innerHeight || document.documentElement.clientHeight || 0;
+      if (!vw || !vh) return false;
+      return r.width >= vw * 0.9 && r.height >= vh * 0.9;
+    } catch { return false; }
+  }
   function onGesture(e) {
     if (!e.isTrusted) return;
     const el = e.target;
-    const interactive = !!(el && el.closest && el.closest(INTERACTIVE));
-    lastGesture = { ts: now(), interactive };
+    const control = el && el.closest && el.closest(INTERACTIVE);
+    lastGesture = { ts: now(), interactive: !!control && !blanketsViewport(control) };
   }
   // Registered first (document_start) so they record the real click target
   // before the page's own handlers run and call window.open.
   window.addEventListener('pointerdown', onGesture, true);
   window.addEventListener('click', onGesture, true);
 
-  // ---- OAuth / federated sign-in detection --------------------------------
-  // A "Sign in with Google/Apple/Microsoft/..." pop-up is NOT a popunder, so we
-  // never block it, in any mode. This matters because the sign-in pop-up often
-  // lands on a handler the user can't guess: Firebase opens
-  // `<project>.firebaseapp.com/__/auth/handler`, not accounts.google.com, so
-  // manually allowlisting the provider wouldn't even help. We match on the
-  // identity-provider host, the well-known OAuth endpoint path, or the OAuth 2.0
-  // authorization query signature. A junk popunder carries none of these, so
-  // this can't reopen the hole it's meant to close.
+  // ---- trusted pop-up destinations: sign-in, payment, share ---------------
+  // Some pop-ups are the OPPOSITE of a popunder: the site breaks without them.
+  // We never block these, in any mode:
+  //   • OAuth / federated sign-in ("Sign in with Google/Apple/..."). The pop-up
+  //     often lands on a handler the user can't guess: Firebase opens
+  //     `<project>.firebaseapp.com/__/auth/handler`, not accounts.google.com,
+  //     so manually allowlisting the provider wouldn't even help.
+  //   • Payment / checkout windows (Stripe, PayPal, 3-D Secure hand-offs, ...).
+  //   • Social share intents (tweet/share/submit windows).
+  // Matched by identity-provider or payment-processor host, well-known OAuth
+  // endpoint path, the OAuth 2.0 authorization query signature, or a share
+  // intent URL. A junk popunder carries none of these (there is no ad money on
+  // the other side of checkout.stripe.com), so this can't reopen the hole.
   //
-  // >>> auth-flow (shared verbatim with test/auth-detection.test.mjs) >>>
+  // >>> trusted-popup (shared verbatim with test/auth-detection.test.mjs) >>>
   // Hosts that do nothing but authentication: an exact/subdomain match is safe.
   const AUTH_HOSTS = [
     'accounts.google.com', 'appleid.apple.com',
@@ -134,7 +158,41 @@
     if (q.get('providerId') && q.get('apiKey')) return true; // Firebase handler
     return false;
   }
-  // <<< auth-flow <<<
+  // Payment processors: their pop-ups are checkout/3DS windows, never ads.
+  const PAY_HOSTS = ['pay.google.com'];
+  const PAY_HOST_SUFFIX = [
+    'stripe.com', 'paypal.com', 'razorpay.com', 'paddle.com', 'checkout.com',
+    'adyen.com', 'braintreegateway.com', 'squareup.com', 'mollie.com',
+    'lemonsqueezy.com', 'klarna.com', '2checkout.com', 'payu.in',
+  ];
+  function isPaymentFlow(url) {
+    if (!url) return false;
+    let u;
+    try { u = new URL(url, location.href); } catch { return false; }
+    const host = u.hostname;
+    if (PAY_HOSTS.includes(host)) return true;
+    return PAY_HOST_SUFFIX.some((s) => host === s || host.endsWith('.' + s));
+  }
+  // Social share intents: the classic small share window.
+  const SHARE_RE = new RegExp([
+    'twitter\\.com/intent/', 'x\\.com/intent/',
+    'facebook\\.com/sharer', 'facebook\\.com/dialog/(?:share|feed|send)',
+    'linkedin\\.com/shar', // /sharing/share-offsite, /shareArticle
+    'pinterest\\.[a-z.]+/pin/create', 'reddit\\.com/submit',
+    'api\\.whatsapp\\.com/send', 'wa\\.me/', 't\\.me/share', 'telegram\\.me/share',
+    'tumblr\\.com/widgets/share', 'news\\.ycombinator\\.com/submitlink',
+    'buffer\\.com/add', 'getpocket\\.com/(?:edit|save)',
+  ].join('|'), 'i');
+  function isShareIntent(url) {
+    if (!url) return false;
+    let u;
+    try { u = new URL(url, location.href); } catch { return false; }
+    return SHARE_RE.test(u.hostname + u.pathname);
+  }
+  function isTrustedPopup(url) {
+    return isAuthFlow(url) || isPaymentFlow(url) || isShareIntent(url);
+  }
+  // <<< trusted-popup <<<
 
   // ---- the decision -------------------------------------------------------
   function shouldBlock(url) {
@@ -142,7 +200,7 @@
     if (url) { try { h = new URL(url, location.href).hostname; } catch {} }
     if (h && h === location.hostname) return false; // same-host pop-up is fine
     if (h && isAllowed(h)) return false;            // user allowed this domain
-    if (isAuthFlow(url)) return false;              // OAuth / sign-in: never a popunder
+    if (isTrustedPopup(url)) return false;          // sign-in/payment/share: never a popunder
     if (strictMode) return true;                     // known offender: block all
     // Smart: allow only if it directly followed a click on a real control.
     const recent = now() - lastGesture.ts < CONFIG.gestureWindowMs;
@@ -200,7 +258,7 @@
       try { dest = new URL(a.href, location.href); } catch { return; }
       if (dest.origin === location.origin) return; // same-site new tabs are fine
       if (isAllowed(dest.hostname)) return;        // user allowed this domain
-      if (isAuthFlow(a.href)) return;              // OAuth / sign-in link, never block
+      if (isTrustedPopup(a.href)) return;          // sign-in/payment/share, never block
       if (!strictMode) return;                     // Smart: trust real link clicks
 
       e.preventDefault();

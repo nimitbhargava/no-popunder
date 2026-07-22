@@ -4,6 +4,34 @@ All notable changes to No Popunder are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project aims to
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-07-22
+
+### Fixed
+
+- Custom-element buttons now count as real clicks. Smart mode only trusted
+  pop-ups that followed a click on a semantic control (`<a>`, `<button>`,
+  `role="button"`, ...), so sites whose "Pay" / "Share" / "Sign in" buttons are
+  styled `<div>`s had their legit pop-ups blocked. The gesture detector now also
+  accepts explicit intent markers: `onclick`, focusable `tabindex`, and the
+  `link` / `menuitem` / `tab` / `option` ARIA roles. What keeps this from
+  re-opening the popunder hole: a matched control that blankets the viewport
+  (>= 90% of both dimensions, the click-trap overlay signature) does not count
+  as intent. That guard also tightens the old behavior, where a full-page
+  transparent `<a href>` overlay counted as a real link click.
+
+### Added
+
+- Payment and share pop-ups are now recognized as trusted destinations and are
+  never blocked, in either mode, even when they open after the gesture window.
+  Payments match processor hosts (Stripe, PayPal, Razorpay, Paddle, Checkout.com,
+  Adyen, Braintree, Square, Mollie, Lemon Squeezy, Klarna, 2Checkout, PayU, and
+  Google Pay); shares match the standard intent URLs (Twitter/X, Facebook,
+  LinkedIn, Pinterest, Reddit, WhatsApp, Telegram, Tumblr, Hacker News, Buffer,
+  Pocket). Together with the 2.4.0 OAuth recognizer these form one
+  trusted-pop-up layer, covered by `test/auth-detection.test.mjs` (35 cases,
+  including host-spoof attempts like `paypal.com.evil.example`, which stay
+  blockable).
+
 ## [2.4.0] - 2026-07-22
 
 ### Fixed

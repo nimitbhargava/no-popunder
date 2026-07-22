@@ -36,8 +36,14 @@ gets auto-clicked. It then decides each pop-up using two layers.
   add more in `block.js`. Strict also applies inside the page's player iframes,
   matched via `ancestorOrigins`.
 
-Three things are always allowed in both layers: same-origin pop-ups, same-tab
-navigations (`window.open(url, "_self")`), and any domain on your Allow list.
+Four things are always allowed in both layers: same-origin pop-ups, same-tab
+navigations (`window.open(url, "_self")`), any domain on your Allow list, and
+trusted pop-up destinations the site needs to work: OAuth sign-in windows
+(Google, Apple, Microsoft, GitHub, Firebase's `firebaseapp.com/__/auth/handler`,
+Auth0, Okta, and any standard OAuth 2.0 authorization URL), payment and checkout
+windows (Stripe, PayPal, Razorpay, Paddle, and other processors), and social
+share intents (tweet/share/submit windows). A popunder carries none of those
+signatures, so recognizing them never weakens the blocking.
 
 ## Screenshots
 
