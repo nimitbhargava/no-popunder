@@ -94,12 +94,55 @@
   window.addEventListener('pointerdown', onGesture, true);
   window.addEventListener('click', onGesture, true);
 
+  // ---- OAuth / federated sign-in detection --------------------------------
+  // A "Sign in with Google/Apple/Microsoft/..." pop-up is NOT a popunder, so we
+  // never block it, in any mode. This matters because the sign-in pop-up often
+  // lands on a handler the user can't guess: Firebase opens
+  // `<project>.firebaseapp.com/__/auth/handler`, not accounts.google.com, so
+  // manually allowlisting the provider wouldn't even help. We match on the
+  // identity-provider host, the well-known OAuth endpoint path, or the OAuth 2.0
+  // authorization query signature. A junk popunder carries none of these, so
+  // this can't reopen the hole it's meant to close.
+  //
+  // >>> auth-flow (shared verbatim with test/auth-detection.test.mjs) >>>
+  // Hosts that do nothing but authentication: an exact/subdomain match is safe.
+  const AUTH_HOSTS = [
+    'accounts.google.com', 'appleid.apple.com',
+    'login.microsoftonline.com', 'login.microsoft.com', 'login.live.com',
+    'login.yahoo.com', 'oauth.telegram.org',
+  ];
+  // Identity-platform domains (any subdomain is an auth tenant).
+  const AUTH_HOST_SUFFIX = [
+    'firebaseapp.com', 'auth0.com', 'okta.com', 'oktapreview.com',
+    'okta-emea.com', 'onelogin.com', 'b2clogin.com', 'microsoftonline.com',
+  ];
+  // Well-known OAuth 2.0 / OIDC / Firebase authorization endpoints.
+  const AUTH_PATH_RE = /\/__\/auth\/handler|\/o\/oauth2\/|\/oauth2?\/(?:v\d+\/)?auth(?:orize|orization|enticate)?|\/i\/oauth2\/authorize|\/login\/oauth\/authorize|\/dialog\/oauth|\/connect\/authorize/i;
+  function isAuthFlow(url) {
+    if (!url) return false;
+    let u;
+    try { u = new URL(url, location.href); } catch { return false; }
+    const host = u.hostname;
+    if (AUTH_HOSTS.includes(host)) return true;
+    if (AUTH_HOST_SUFFIX.some((s) => host === s || host.endsWith('.' + s))) return true;
+    if (AUTH_PATH_RE.test(u.pathname)) return true;
+    const q = u.searchParams;
+    if (q.get('response_type') && (q.get('client_id') || q.get('redirect_uri'))) return true;
+    if (q.get('client_id') && q.get('redirect_uri') && q.get('scope')) return true;
+    const at = (q.get('authType') || '').toLowerCase();
+    if (at === 'signinviapopup' || at === 'signinwithpopup' || at === 'signinviaredirect') return true;
+    if (q.get('providerId') && q.get('apiKey')) return true; // Firebase handler
+    return false;
+  }
+  // <<< auth-flow <<<
+
   // ---- the decision -------------------------------------------------------
   function shouldBlock(url) {
     let h;
     if (url) { try { h = new URL(url, location.href).hostname; } catch {} }
     if (h && h === location.hostname) return false; // same-host pop-up is fine
     if (h && isAllowed(h)) return false;            // user allowed this domain
+    if (isAuthFlow(url)) return false;              // OAuth / sign-in: never a popunder
     if (strictMode) return true;                     // known offender: block all
     // Smart: allow only if it directly followed a click on a real control.
     const recent = now() - lastGesture.ts < CONFIG.gestureWindowMs;
@@ -157,6 +200,7 @@
       try { dest = new URL(a.href, location.href); } catch { return; }
       if (dest.origin === location.origin) return; // same-site new tabs are fine
       if (isAllowed(dest.hostname)) return;        // user allowed this domain
+      if (isAuthFlow(a.href)) return;              // OAuth / sign-in link, never block
       if (!strictMode) return;                     // Smart: trust real link clicks
 
       e.preventDefault();

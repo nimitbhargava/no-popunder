@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "No Popunder",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Blocks popunder ad tabs on any site without breaking logins or video. No servers, no tracking, nothing leaves your device.",
   "icons": {
     "16": "icons/icon16.png",

@@ -4,6 +4,21 @@ All notable changes to No Popunder are recorded here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project aims to
 follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2026-07-22
+
+### Fixed
+
+- "Sign in with Google" (and Apple, Microsoft, Facebook, GitHub, and other
+  OAuth flows) are no longer blocked. The sign-in pop-up is recognized as a
+  federated-auth flow and always allowed, in both Smart and Strict mode. This
+  was especially bad for Firebase logins: the pop-up opens on a
+  `<project>.firebaseapp.com/__/auth/handler` URL, not on `accounts.google.com`,
+  so allowlisting the provider by hand never actually worked. Recognition is by
+  identity-provider host, the standard OAuth/OIDC endpoint path, or the OAuth
+  2.0 authorization query signature; a junk popunder carries none of these, so
+  ordinary popunder blocking is unchanged. Covered by
+  `test/auth-detection.test.mjs`.
+
 ## [2.3.0] - 2026-05-31
 
 ### Added
